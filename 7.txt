@@ -7,6 +7,12 @@ CREATE TABLE Library (
     published_year INT
 );
 
+INSERT INTO Library (book_id, book_name, author_name, genre, published_year) VALUES
+    (1, 'Murder on the Orient Express', 'Agatha Christie', 'Mystery', 1934),
+    (2, 'The Fault in Our Stars', 'John Green', 'Romance', 2012),
+    (3, 'Verity', 'Colleen Hoover', 'Thriller', 2018);
+
+
 -- Create Library_Audit table to track updates and deletions
 CREATE TABLE Library_Audit (
     audit_id INT AUTO_INCREMENT PRIMARY KEY,
