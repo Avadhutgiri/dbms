@@ -78,3 +78,31 @@ VALUES
 
 
 CALL CalculateFine(101, 'Database Systems');
+
+
+--or
+
+use mydb;
+
+CREATE TABLE Areas ( radius DECIMAL(10,2) , area DECIMAL(10,2));
+DELIMITER //
+CREATE PROCEDURE CalculateAreas()
+BEGIN
+DECLARE current_radius DECIMAL(10, 2);
+DECLARE current_area DECIMAL(10, 2);
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+SELECT 'An error occurred while calculating areas.' AS ErrorMessage;
+END;
+SET current_radius = 5;    
+WHILE current_radius <= 9 DO
+SET current_area = ROUND(PI() * current_radius * current_radius, 2);
+INSERT INTO Areas (radius, area) VALUES (current_radius, current_area);
+SET current_radius = current_radius + 1;
+END WHILE;
+END;
+// delimiter ; 
+
+Call CalculateAreas();
+
+select * from Areas;
