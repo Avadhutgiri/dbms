@@ -40,7 +40,7 @@ MariaDB [te31260_db]> select e.Emp_fname, e.Emp_position, d.Dept_location, e.Emp
 10 rows in set (0.001 sec)
 
 Query 3: Find the Employee details ,Proj_id,Project cost who does not have Project
-location as ‘Hyderabad’.
+location as 'Hyderabad'.
 MariaDB [te31260_db]> Select e.Emp_fname, e.Emp_lname, p.Proj_id, p.Proj_cost
 	-> from Employee e
 	-> join Dept d on e.Dept_id = d.Dept_id

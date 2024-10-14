@@ -178,7 +178,7 @@ MariaDB [te31260_db]> select * from Project;
 +---------+---------+--------------------+---------------+-----------+-----------+
 6 rows in set (0.001 sec)
 
-Query 2: Display all Employee details with Department ‘Computer’ and ‘IT’ and Employee
+Query 2: Display all Employee details with Department 'Computer' and 'IT' and Employee
 first name starting with 'p' or 'h'.
 
 MariaDB [te31260_db]> SELECT Employee.* from Employee join Dept on Employee.Dept_id = Dept.Dept_id where
@@ -227,7 +227,7 @@ MariaDB [te31260_db]> select * from Employee;
 +--------+---------+-----------+-----------+--------------+------------+--------------+
 10 rows in set (0.001 sec)
 
-Query 5: Delete Department details which location is ‘Mumbai’.
+Query 5: Delete Department details which location is 'Mumbai'.
 
 MariaDB [te31260_db]> delete from Dept where Dept_location = 'Mumbai';
 Query OK, 1 row affected (0.036 sec)
@@ -247,7 +247,7 @@ MariaDB [te31260_db]> select * from Dept;
 
 
 
-Query 6: Find the names of Projects with location ‘pune’ .
+Query 6: Find the names of Projects with location 'pune' .
 
 MariaDB [te31260_db]> select * from Project where Proj_location = 'Pune';
 +---------+---------+-----------+---------------+-----------+-----------+

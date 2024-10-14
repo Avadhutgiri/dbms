@@ -1,103 +1,56 @@
-MariaDB [te31260_db]> create table stud_marks( id int primary key auto_increment, roll int, name varchar(30), total_marks int);
-Query OK, 0 rows affected (0.169 sec)
+﻿CREATE TABLE Stud_Marks (
+    roll_no INT PRIMARY KEY,
+    name VARCHAR(50),
+    total_marks INT
+);
 
-MariaDB [te31260_db]> create table result(roll int, name varchar(30), class varchar(30));
-Query OK, 0 rows affected (0.171 sec)
-
-MariaDB [te31260_db]> insert into stud_marks(roll, name, total_marks) values(1,"Gayatri", 1450), (2,"Parth", 945), (3,"Sakshi",1460), (4,"Hans",1350) , (5,"Prajwal",970), (6,"Anjali",1300);
-Query OK, 6 rows affected (0.023 sec)
-Records: 6  Duplicates: 0  Warnings: 0
-
-MariaDB [te31260_db]> select * from stud_marks;
-+----+------+---------+-------------+
-| id | roll | name	| total_marks |
-+----+------+---------+-------------+
-|  1 |	1 | Gayatri |    	1450 |
-|  2 |	2 | Parth   |     	945 |
-|  3 |	3 | Sakshi  |    	1460 |
-|  4 |	4 | Hans	|    	1350 |
-|  5 |	5 | Prajwal |     	970 |
-|  6 |	6 | Anjali  |    	1300 |
-+----+------+---------+-------------+
-6 rows in set (0.001 sec)
-
-MariaDB [te31260_db]> delimiter $
-
-MariaDB [te31260_db]> create procedure proc_result(in marks int, out class char(20))
-	-> begin
-	-> if(marks < 1500 && amrks > 990) then
-	-> set class = 'Distinction';
-	-> end if;
-	-> if(marks < 989 && marks > 890) then
-	-> set class = 'First Class';
-	-> end if;
-	-> if(marks <889 && marks > 825) then
-	-> set class = 'Higher Second Class';
-	-> end if;
-	-> if(marks < 824 && marks > 750) then
-	-> set class = 'Second Class';
-	-> end if;
-	-> if( marks < 749 && marks > 650) then
-	-> set class = 'Passed';
-	-> end if;
-	-> if(marks < 649) then
-	-> set class = 'Fail';
-	-> end if;
-	-> end $
-MariaDB [te31260_db]> create function final_result(rno int) returns int deterministic
-	-> begin
-	-> 	declare fmarks integer;
-	-> 	declare grade varchar(30);
-	-> 	declare stud_name varchar(30);
-	-> 	declare continue handler for not found begin return 0;
-	-> end;
-	-> 	select sm.total_marks,
-	->     	sm.name into fmarks,
-	->     	stud_name
-	-> 	from stud_marks as sm
-	-> 	where sm.roll = rno;
-	->  
-	-> 	call proc_result(fmarks, @grade);
-	->  
-	-> 	insert into result(roll, name, class)
-	-> 	values(rno, stud_name, @grade);
-	-> 	return rno;
-	-> end;
-	-> $
-Query OK, 0 rows affected (0.065 sec)
-
-MariaDB [te31260_db]> select final_result(1);
-+-----------------+
-| final_result(1) |
-+-----------------+
-|           	1 |
-+-----------------+
-1 row in set (0.033 sec)
-
-MariaDB [te31260_db]> select * from result;
-+------+---------+-------------+
-| roll | name	| class   	|
-+------+---------+-------------+
-|	1 | Gayatri | Distinction |
-+------+---------+-------------+
-1 row in set (0.001 sec)
+INSERT INTO Stud_Marks (roll_no, name, total_marks) 
+VALUES 
+(1, 'John Doe', 1000),
+(2, 'Jane Smith', 950),
+(3, 'Michael Johnson', 875),
+(4, 'Emily Davis', 820),
+(5, 'David Brown', 1200);
 
 
+DELIMITER //
 
-MariaDB [te31260_db]> select final_result(3)$
-+-----------------+
-| final_result(3) |
-+-----------------+
-|           	3 |
-+-----------------+
-1 row in set (0.036 sec)
+CREATE PROCEDURE proc_Grade(IN roll INT, OUT Grade VARCHAR(50))
+BEGIN
+    DECLARE studMarks INT;
+    
+    -- Fetch total_marks into the variable studMarks
+    SELECT total_marks INTO studMarks FROM Stud_Marks WHERE roll_no = roll;
+    
+    -- Determine grade based on the total marks
+    IF studMarks BETWEEN 990 AND 1500 THEN
+        SET Grade = 'Distinction';
+    ELSEIF studMarks BETWEEN 900 AND 989 THEN
+        SET Grade = 'FirstClass';
+    ELSEIF studMarks BETWEEN 835 AND 899 THEN
+        SET Grade = 'HigherSecondClass';
+    ELSE
+        SET Grade = 'LowerClass';
+    END IF;
+END //
 
-MariaDB [te31260_db]> select * from result$
-+------+---------+-------------+
-| roll | name	| class   	|
-+------+---------+-------------+
-|	1 | Gayatri | Distinction |
-|	3 | Sakshi  | Distinction |
-+------+---------+-------------+
-2 rows in set (0.001 sec)
+DELIMITER ;
 
+DELIMITER //
+
+CREATE FUNCTION func_Grade(rollnumber INT)
+RETURNS VARCHAR(50)
+BEGIN
+    DECLARE Grade VARCHAR(50);
+    
+    -- Call the procedure to get the grade
+    CALL proc_Grade(rollnumber, @kunal);
+    
+    -- Return the value stored in the variable @kunal
+    RETURN @kunal;
+END //
+
+DELIMITER ;
+
+SELECT roll_no, name, total_marks, func_Grade(roll_no) AS Class 
+FROM Stud_Marks;
