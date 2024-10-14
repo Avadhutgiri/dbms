@@ -1,0 +1,201 @@
+<dependency> <groupId>org.mongodb</groupId> <artifactId>mongo-java-driver</artifactId> <version>3.12.0</version> </dependency>
+
+package a12;
+
+
+
+import com.mongodb.MongoClient;
+
+import com.mongodb.client.MongoDatabase;
+
+import com.mongodb.client.MongoCollection;
+
+import com.mongodb.client.MongoCursor;
+
+import org.bson.Document;
+
+
+
+import java.util.Scanner;
+
+
+
+public class JavaMongo {
+
+    public static void main(String[] args) {
+
+        MongoClient mongoClient = new MongoClient("localhost", 27017);
+
+        System.out.println("Db connected Successfully");
+
+
+
+        MongoDatabase db = mongoClient.getDatabase("library");
+
+        MongoCollection<Document> collection = db.getCollection("libraryRecords");
+
+
+
+        Scanner scanner = new Scanner(System.in);
+
+        int choice;
+
+
+
+        do {
+
+            System.out.println("\nMenu:");
+
+            System.out.println("1. Insert a new record");
+
+            System.out.println("2. Update a record");
+
+            System.out.println("3. Delete a record");
+
+            System.out.println("4. Display all records");
+
+            System.out.println("5. Drop the database");
+
+            System.out.println("6. Exit");
+
+            System.out.print("Enter your choice: ");
+
+            choice = scanner.nextInt();
+
+            scanner.nextLine(); // Consume newline
+
+
+
+            switch (choice) {
+
+                case 1: // Insert a new record
+
+                    System.out.print("Enter record ID: ");
+
+                    String id = scanner.nextLine();
+
+                    System.out.print("Enter title: ");
+
+                    String title = scanner.nextLine();
+
+                    System.out.print("Enter author: ");
+
+                    String author = scanner.nextLine();
+
+                    System.out.print("Enter available copies: ");
+
+                    int availableCopies = scanner.nextInt();
+
+
+
+                    Document newDoc = new Document("_id", id)
+
+                            .append("title", title)
+
+                            .append("author", author)
+
+                            .append("availableCopies", availableCopies);
+
+
+
+                    collection.insertOne(newDoc);
+
+                    System.out.println("Record inserted successfully.");
+
+                    break;
+
+
+
+                case 2: // Update a record
+
+                    System.out.print("Enter record ID to update: ");
+
+                    String updateId = scanner.nextLine();
+
+                    System.out.print("Enter new available copies: ");
+
+                    int newAvailableCopies = scanner.nextInt();
+
+
+
+                    collection.updateOne(
+
+                        new Document("_id", updateId), 
+
+                        new Document("$set", new Document("availableCopies", newAvailableCopies))
+
+                    );
+
+                    System.out.println("Record updated successfully.");
+
+                    break;
+
+
+
+                case 3: // Delete a record
+
+                    System.out.print("Enter record ID to delete: ");
+
+                    String deleteId = scanner.nextLine();
+
+                    collection.deleteOne(new Document("_id", deleteId));
+
+                    System.out.println("Record deleted successfully.");
+
+                    break;
+
+
+
+                case 4: // Display all records
+
+                    System.out.println("Documents in the libraryRecords collection:");
+
+                    MongoCursor<Document> cursor = collection.find().iterator();
+
+                    while (cursor.hasNext()) {
+
+                        System.out.println(cursor.next().toJson());
+
+                    }
+
+                    cursor.close();
+
+                    break;
+
+
+
+                case 5: // Drop the database
+
+                    mongoClient.dropDatabase("library");
+
+                    System.out.println("Database dropped successfully.");
+
+                    break;
+
+
+
+                case 6: // Exit
+
+                    System.out.println("Exiting...");
+
+                    break;
+
+
+
+                default:
+
+                    System.out.println("Invalid choice. Please try again.");
+
+            }
+
+        } while (choice != 6);
+
+
+
+        scanner.close();
+
+        mongoClient.close();
+
+    }
+
+}
