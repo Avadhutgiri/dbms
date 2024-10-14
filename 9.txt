@@ -1,0 +1,313 @@
+Library Management System:
+
+Query: Create Collection of books and insert necessary data.
+> db.createCollection("books");
+{ "ok" : 1 }
+> db.books.insertMany([
+... 	{
+...     	title: "Wings of Fire",
+...     	author: "A.P.J. Abdul Kalam",
+...     	genre: "Autobiography",
+...     	isbn: "9788173711466",
+...     	availableCopies: 10,
+...     	price: 299.00
+... 	},
+... 	{
+...     	title: "The God of Small Things",
+...     	author: "Arundhati Roy",
+...     	genre: "Fiction",
+...     	isbn: "9780006550686",
+...     	availableCopies: 5,
+...     	price: 499.00
+... 	},
+... 	{
+...     	title: "Midnight's Children",
+...     	author: "Salman Rushdie",
+...     	genre: "Fiction",
+...     	isbn: "9780812976533",
+...     	availableCopies: 3,
+...     	price: 599.00
+... 	},
+... 	{
+...     	title: "The White Tiger",
+...     	author: "Aravind Adiga",
+...     	genre: "Fiction",
+...     	isbn: "9781439156961",
+...     	availableCopies: 4,
+...     	price: 350.00
+... 	},
+... 	{
+...     	title: "In Five Years",
+...     	author: "Rebecca Serle",
+...     	genre: "Fiction",
+...     	isbn: "9781982137464",
+...     	availableCopies: 7,
+...     	price: 450.00
+... 	},
+... 	{
+...     	title: "The Immortals of Meluha",
+...     	author: "Amish Tripathi",
+...     	genre: "Historical Fiction",
+...     	isbn: "9789380658349",
+...     	availableCopies: 6,
+...     	price: 399.00
+... 	},
+... 	{
+...     	title: "The Palace of Illusions",
+...     	author: "Chitra Banerjee Divakaruni",
+...     	genre: "Fiction",
+...     	isbn: "9780385523878",
+...     	availableCopies: 2,
+...     	price: 499.00
+... 	},
+... 	{
+...     	title: "Train to Pakistan",
+...     	author: "Khushwant Singh",
+...     	genre: "Historical Fiction",
+...     	isbn: "9780143030965",
+...     	availableCopies: 5,
+...     	price: 299.00
+... 	}
+... ]);
+{
+    "acknowledged" : true,
+    "insertedIds" : [
+   	 ObjectId("66ff8bf3490e18fcd47037e2"),
+   	 ObjectId("66ff8bf3490e18fcd47037e3"),
+   	 ObjectId("66ff8bf3490e18fcd47037e4"),
+   	 ObjectId("66ff8bf3490e18fcd47037e5"),
+   	 ObjectId("66ff8bf3490e18fcd47037e6"),
+   	 ObjectId("66ff8bf3490e18fcd47037e7"),
+   	 ObjectId("66ff8bf3490e18fcd47037e8"),
+   	 ObjectId("66ff8bf3490e18fcd47037e9")
+    ]
+}
+
+
+
+
+Query: Find the book and its information of the author Arundhati Roy.
+> db.books.find({ author: "Arundhati Roy" });
+{ "_id" : ObjectId("66ff8bf3490e18fcd47037e3"), "title" : "The God of Small Things", "author" : "Arundhati Roy", "genre" : "Fiction", "isbn" : "9780006550686", "availableCopies" : 5, "price" : 499 }
+
+Query: Update the no. of copies of Wings of Fire to 8
+> db.books.updateOne(
+... 	{ isbn: "9788173711466" }, 
+... 	{ $set: { availableCopies: 8 } }
+... );
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+Query: Use the save method update the details of Wings of Fire with no. of copies as 10.
+> db.books.save({
+... 	title: "Wings of Fire",
+... 	author: "A.P.J. Abdul Kalam",
+... 	genre: "Autobiography",
+... 	isbn: "9788173711466",
+... 	availableCopies: 10,
+... 	price: 299.00
+... });
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+Query: Update the price of books written by Aravind Adiga to 379.00.
+> db.books.updateMany(
+... 	{ author: "Aravind Adiga" },
+... 	{ $set: { price: 379.00 } }
+... );
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+Query: Delete the book God of Small Things from the database.
+> db.books.deleteOne({ isbn: "9780006550686" }); 
+{ "acknowledged" : true, "deletedCount" : 1 }
+
+Query: Find the books of authors APJ Abdul Kalam and Salam Rushdie.
+> db.books.find({
+... 	$or: [
+...     	{ author: "A.P.J. Abdul Kalam" },
+...     	{ author: "Salman Rushdie" }
+... 	]
+... });
+{ "_id" : ObjectId("66ff8bf3490e18fcd47037e2"), "title" : "Wings of Fire", "author" : "A.P.J. Abdul Kalam", "genre" : "Autobiography", "isbn" : "9788173711466", "availableCopies" : 10, "price" : 299 }
+{ "_id" : ObjectId("66ff8bf3490e18fcd47037e4"), "title" : "Midnight's Children", "author" : "Salman Rushdie", "genre" : "Fiction", "isbn" : "9780812976533", "availableCopies" : 3, "price" : 599 }
+
+Query: Find the books having a price range in between 300 and 500.
+> db.books.find({
+... 	price: {
+...     	$gte: 300,
+...     	$lte: 500
+... 	}
+... });
+{ "_id" : ObjectId("66ff8bf3490e18fcd47037e5"), "title" : "The White Tiger", "author" : "Aravind Adiga", "genre" : "Fiction", "isbn" : "9781439156961", "availableCopies" : 4, "price" : 379 }
+{ "_id" : ObjectId("66ff8bf3490e18fcd47037e6"), "title" : "In Five Years", "author" : "Rebecca Serle", "genre" : "Fiction", "isbn" : "9781982137464", "availableCopies" : 7, "price" : 450 }
+{ "_id" : ObjectId("66ff8bf3490e18fcd47037e7"), "title" : "The Immortals of Meluha", "author" : "Amish Tripathi", "genre" : "Historical Fiction", "isbn" : "9789380658349", "availableCopies" : 6, "price" : 399 }
+{ "_id" : ObjectId("66ff8bf3490e18fcd47037e8"), "title" : "The Palace of Illusions", "author" : "Chitra Banerjee Divakaruni", "genre" : "Fiction", "isbn" : "9780385523878", "availableCopies" : 2, "price" : 499 }
+
+Query: Update the price of Fictional books to 399.
+> db.books.updateMany(
+... {genre: "Fiction"},
+... {$set: {price: 399}},
+... {upsert: true}
+... );
+{ "acknowledged" : true, "matchedCount" : 4, "modifiedCount" : 4 }
+> db.books.find().pretty();
+{
+    "_id" : ObjectId("66ff8bf3490e18fcd47037e2"),
+    "title" : "Wings of Fire",
+    "author" : "A.P.J. Abdul Kalam",
+    "genre" : "Autobiography",
+    "isbn" : "9788173711466",
+    "availableCopies" : 10,
+    "price" : 299
+}
+{
+    "_id" : ObjectId("66ff8bf3490e18fcd47037e4"),
+    "title" : "Midnight's Children",
+    "author" : "Salman Rushdie",
+    "genre" : "Fiction",
+    "isbn" : "9780812976533",
+    "availableCopies" : 3,
+    "price" : 399
+}
+{
+    "_id" : ObjectId("66ff8bf3490e18fcd47037e5"),
+    "title" : "The White Tiger",
+    "author" : "Aravind Adiga",
+    "genre" : "Fiction",
+    "isbn" : "9781439156961",
+    "availableCopies" : 4,
+    "price" : 399
+}
+{
+    "_id" : ObjectId("66ff8bf3490e18fcd47037e6"),
+    "title" : "In Five Years",
+    "author" : "Rebecca Serle",
+    "genre" : "Fiction",
+    "isbn" : "9781982137464",
+    "availableCopies" : 7,
+    "price" : 399
+}
+{
+    "_id" : ObjectId("66ff8bf3490e18fcd47037e7"),
+    "title" : "The Immortals of Meluha",
+    "author" : "Amish Tripathi",
+    "genre" : "Historical Fiction",
+    "isbn" : "9789380658349",
+    "availableCopies" : 6,
+    "price" : 399
+}
+{
+    "_id" : ObjectId("66ff8bf3490e18fcd47037e8"),
+    "title" : "The Palace of Illusions",
+    "author" : "Chitra Banerjee Divakaruni",
+    "genre" : "Fiction",
+    "isbn" : "9780385523878",
+    "availableCopies" : 2,
+    "price" : 399
+}
+{
+    "_id" : ObjectId("66ff8bf3490e18fcd47037e9"),
+    "title" : "Train to Pakistan",
+    "author" : "Khushwant Singh",
+    "genre" : "Historical Fiction",
+    "isbn" : "9780143030965",
+    "availableCopies" : 5,
+    "price" : 299
+}
+
+Embedded Document:
+> db.books.updateMany(
+... 	{},
+... 	{
+...     	$set: {
+...         	publisher: {
+...             	name: "Indian Publishers",
+...             	location: "New Delhi"
+...         	},
+...         	reviews: [
+...             	{ reviewer: "Ravi Sharma", comment: "Inspiring!", rating: 5 },
+...             	{ reviewer: "Sneha Gupta", comment: "A must-read.", rating: 4 }
+...         	]
+...     	}
+... 	}
+... );
+{ "acknowledged" : true, "matchedCount" : 0, "modifiedCount" : 0 }
+> db.books.find({}, {
+... 	title: 1,
+... 	author: 1,
+... 	"publisher.name": 1,
+... 	"reviews": 1
+... }).pretty();
+{
+	"_id": ObjectId("66ff8bf3490e18fcd47037e2"),
+	"title": "Wings of Fire",
+	"author": "A.P.J. Abdul Kalam",
+	"publisher": { "name": "Indian Publishers", "location": "New Delhi" },
+	"reviews": [
+    	{ "reviewer": "Ravi Sharma", "comment": "Inspiring!", "rating": 5 },
+    	{ "reviewer": "Sneha Gupta", "comment": "A must-read.", "rating": 4 }
+	]
+}
+{
+	"_id": ObjectId("66ff8bf3490e18fcd47037e4"),
+	"title": "Midnight's Children",
+	"author": "Salman Rushdie",
+	"publisher": { "name": "Indian Publishers", "location": "New Delhi" },
+	"reviews": [
+    	{ "reviewer": "Ravi Sharma", "comment": "Inspiring!", "rating": 5 },
+    	{ "reviewer": "Sneha Gupta", "comment": "A must-read.", "rating": 4 }
+	]
+}
+...
+Array Operations:
+> db.books.insertOne({
+... 	title: "The Alchemist",
+... 	author: "Paulo Coelho",
+... 	genres: ["Fiction", "Adventure"],
+... 	isbn: "9780061122415",
+... 	availableCopies: 15,
+... 	price: 299.00
+... });
+{
+    "acknowledged" : true,
+    "insertedId" : ObjectId("6708bee3d0eb252392bd55e3")
+}
+> db.books.updateOne(
+... 	{ title: "The Alchemist" },
+... 	{ $push: { genres: "Fantasy" } }
+... );
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+> db.books.find({ title: "The Alchemist" }).pretty();
+{
+    "_id" : ObjectId("6708bee3d0eb252392bd55e3"),
+    "title" : "The Alchemist",
+    "author" : "Paulo Coelho",
+    "genres" : [
+   	 "Fiction",
+   	 "Adventure",
+   	 "Fantasy"
+    ],
+    "isbn" : "9780061122415",
+    "availableCopies" : 15,
+    "price" : 299
+}
+> db.books.updateOne(
+... 	{ title: "The Alchemist" },
+... 	{ $pop: { genres: 1 } } 
+... );
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+> db.books.find({ title: "The Alchemist" }).pretty();
+{
+    "_id" : ObjectId("6708bee3d0eb252392bd55e3"),
+    "title" : "The Alchemist",
+    "author" : "Paulo Coelho",
+    "genres" : [
+   	 "Fiction",
+   	 "Adventure"
+    ],
+    "isbn" : "9780061122415",
+    "availableCopies" : 15,
+    "price" : 299
+}
+>
+
+
+
