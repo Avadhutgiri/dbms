@@ -1,0 +1,95 @@
+
+Map-Reduce in MongoDB
+
+Map-reduce is a data processing method that accepts large volumes of data and reduces it into useful aggregated results.
+
+db.test.insertMany([
+  { "_id" : ObjectId("59c2468246f79abd1840c884"), "name" : "Arun", "roll" : 1, "class" : "T.E", "branch" : "comp" },
+  { "_id" : ObjectId("59c2469e46f79abd1840c885"), "name" : "Yash", "roll" : 2, "class" : "T.E", "branch" : "IT" },
+  { "_id" : ObjectId("59c246a946f79abd1840c886"), "name" : "Yashashree", "roll" : 3, "class" : "S.E", "branch" : "comp" },
+  { "_id" : ObjectId("59c246b246f79abd1840c887"), "name" : "Rutuja", "roll" : 4, "class" : "S.E", "branch" : "ENTC" },
+  { "_id" : ObjectId("59c246bd46f79abd1840c888"), "name" : "Gaurav", "roll" : 5, "class" : "B.E", "branch" : "comp" },
+  { "_id" : ObjectId("59c246d646f79abd1840c889"), "name" : "Aishwarya", "roll" : 6, "class" : "B.E", "branch" : "comp" },
+  { "_id" : ObjectId("59c246a946f79abd1840c281"), "name" : "Anirudh", "roll" : 18, "class" : "T.E", "branch" : "comp" }
+]);
+
+Syntax for Map-Reduce function in MongoDB:
+
+db.collection.mapReduce(Mapfunc, Reducefunc,  
+{ query:{field:’<value>’}, out:'resultant' } )
+
+Mapper function: It accepts data and emits the specified key-value pairs from documents of the given collection.
+
+Reduce function: It accepts the key-value pairs emitted by the mapper function and reduces them to get a smaller aggregated result. If a key has multiple values, it accepts an array of those values for that key.
+
+Example Query:
+
+Find year-wise total number of students from the computer branch:
+
+var Mapfunc = function() { emit(this.class, 1); }
+var Reducefunc = function(key, values) { return Array.sum(values); }
+
+db.test.mapReduce(Mapfunc, Reducefunc, { out: 'resultant', query: { branch: ‘comp’ } });
+
+Result:
+
+{
+  "result" : "resultant",
+  "timeMillis" : 460,
+  "counts" : { "input" : 5, "emit" : 5, "reduce" : 2, "output" : 3 },
+  "ok" : 1
+}
+
+Collection for Assignment:
+
+db.classes.insert({
+  class: "Philosophy 101",
+  startDate: new Date(2016, 1, 10),
+  students: [
+    { fName: "Dale", lName: "Cooper", age: 42 },
+    { fName: "Lucy", lName: "Moran", age: 35 },
+    { fName: "Tommy", lName: "Hill", age: 44 }
+  ],
+  cost: 1600,
+  professor: "Paul Slugman",
+  topics: "Socrates, Plato, Aristotle, Francis Bacon",
+  book: {
+    isbn: "1133612105",
+    title: "Philosophy: A Text With Readings",
+    price: 165.42
+  }
+});
+
+Several other course records are added similarly for classes like College Algebra, Astronomy 101, Geology 101, Biology 101, and Chemistry 101, each with details about students, cost, professor, and topics covered.
+
+Queries:
+
+1. How many classes does “Alice Jones” teach?
+
+2. Find the total number of students enrolled for each class.
+
+3. Find the total number of classes conducted by each professor and the total cost to attend each professor’s classes.
+
+Expected Solutions:
+
+1)
+
+var mapFunc2 = function() { emit(this.professor, 1); }
+var reduceFunc2 = function(professor, count) { return Array.sum(count); }
+
+db.classes.mapReduce(mapFunc2, reduceFunc2, { query: { professor: "Alice Jones" }, out: "map_ex_2" });
+
+3)
+
+Emit a document consisting of both the count and the cost to attend each professor's classes to the reduce function:
+
+var mapFunc4 = function() { emit(this.professor, { count: 1, cost: this.cost }); }
+
+var reduceFunc4 = function(professor, values) {
+  var value = { count: 0, cost: 0 };
+  for (i = 0; i < values.length; i++) {
+    value.count += values[i].count;
+    value.cost += values[i].cost;
+  }
+  return value;
+}
