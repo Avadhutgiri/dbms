@@ -112,7 +112,7 @@ public static void displayRecords(Connection connection) throws SQLException
 {
 String sql = "SELECT * FROM users"; 
 try (Statement statement = connection.createStatenent(); 
-        Resultset resultset = statement.executeQuery(sql))
+        ResultSet resultset = statement.executeQuery(sql))
     {
         System.out.println("ID\tName\t\t\tEmail"):
         while (resultSet.next()) 
